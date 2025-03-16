@@ -7,6 +7,9 @@ import {
   Marker,
 } from "@muni-town/leaf";
 
+/** A decentralized identifier ( DID ) */
+export type Did = `did:${string}:${string}`;
+
 /** The display name, slug, short description, and image / icon URI of an entity. */
 export const BasicMeta = defComponent(
   "name:01JPE9PEBF47QJR6THNW4J4JXJ",
@@ -102,7 +105,7 @@ export const Messages = defComponent(
  */
 export const AuthorDids = defComponent(
   "authorDids:01JPEBV8TJ8YCXXYD156NJSR5Y",
-  LoroMovableList<string>
+  LoroMovableList<Did>
 );
 
 /**
