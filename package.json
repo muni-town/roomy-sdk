@@ -3,5 +3,8 @@
   "license": "MIT or APACHE-2.0",
   "export": {
     "./": "./index.ts"
+  },
+  "dependencies": {
+    "@muni-town/leaf": "npm:@jsr/muni-town__leaf@0.2.0-preview.7"
   }
 }
