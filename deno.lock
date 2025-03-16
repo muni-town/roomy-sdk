@@ -1,7 +1,7 @@
 {
   "version": "4",
   "specifiers": {
-    "npm:@jsr/muni-town__leaf@0.2.0-preview.7": "0.2.0-preview.7"
+    "npm:@jsr/muni-town__leaf@0.2.0-preview.8": "0.2.0-preview.8"
   },
   "npm": {
     "@ampproject/remapping@2.3.0": {
@@ -44,8 +44,8 @@
         "@jridgewell/sourcemap-codec"
       ]
     },
-    "@jsr/muni-town__leaf@0.2.0-preview.7": {
-      "integrity": "sha512-b/TFIAUQTl68aC64gqrg2WzmqEpARkX19Cq53MkDv8HntUwmwtrhni810BGc6Yb4jWIjq3yP6yi5eo2pktUa5w==",
+    "@jsr/muni-town__leaf@0.2.0-preview.8": {
+      "integrity": "sha512-PxkTpwDf3tNIKvumhDmo/rhP6WJB34VXZbfacHE+FG+ErN9mn6eAxA0vQLzL6AtDgXGD2Hz4gg/eMe2ie6+xNw==",
       "dependencies": [
         "@jsr/std__fs",
         "@jsr/std__path",
@@ -162,7 +162,7 @@
   "workspace": {
     "packageJson": {
       "dependencies": [
-        "npm:@jsr/muni-town__leaf@0.2.0-preview.7"
+        "npm:@jsr/muni-town__leaf@0.2.0-preview.8"
       ]
     }
   }
