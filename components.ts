@@ -6,6 +6,7 @@ import {
   LoroText,
   Marker,
 } from "@muni-town/leaf";
+import { LoroList } from "./index.ts";
 
 /** A decentralized identifier ( DID ) */
 export type Did = `did:${string}:${string}`;
@@ -20,7 +21,7 @@ export const BasicMeta = defComponent(
     /** The entity ID of an entity with an `ImageUri` component. */
     image?: EntityIdStr;
   }>,
-  (map) => map.set("name", "")
+  (map) => map.set("name", "Unnamed")
 );
 
 /** This entity is in reply to another entity. */
@@ -129,4 +130,28 @@ export const Content = defComponent(
 export const SpaceSidebarNavigation = defComponent(
   "spaceSidebarNavigation:01JPFMBD0XT7B922PSQ7KQ99EW",
   LoroMovableList<EntityIdStr>
+);
+
+/** Emoji-type reactions to an entity. */
+export const Reactions = defComponent(
+  "reactions:01JPFTQACDW0KM3857XWER87RR",
+  LoroList<{
+    /** The reaction that is being made. This should usually be a unicode emoji character, but we're
+     * leaving open the possibility to other kinds of reactions. */
+    reaction: string;
+    /** The person that reacted with the `reaction`. */
+    userDid: Did;
+  }>
+);
+
+/**
+ * Metadata for a channel announcement, which is a message that might get inserted into a channel
+ * timeline for various reasons.
+ * */
+export const ChannelAnnouncement = defComponent(
+  "channelAnnouncement:01JPFTN90MGBMBCMCNJ4V65YF2",
+  LoroMap<{
+    kind: "messageMoved" | "messageDeleted" | "threadCreated" | string;
+  }>,
+  (map) => map.set("kind", "unknown")
 );
