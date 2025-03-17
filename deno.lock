@@ -1,7 +1,7 @@
 {
   "version": "4",
   "specifiers": {
-    "npm:@jsr/muni-town__leaf@0.2.0-preview.9": "0.2.0-preview.9",
+    "npm:@jsr/muni-town__leaf@0.2.0-preview.10": "0.2.0-preview.10",
     "npm:typedoc@0.28.0": "0.28.0_typescript@5.8.2"
   },
   "npm": {
@@ -53,8 +53,8 @@
         "@jridgewell/sourcemap-codec"
       ]
     },
-    "@jsr/muni-town__leaf@0.2.0-preview.9": {
-      "integrity": "sha512-U83KKRl/rMIUfLz2pzl6OuHJXxNRD3Uj91qx9DtGIJiUFT9wubdkcSGtUKOl0mLpwsKnZhUbL5vTbZ/0jveVsw==",
+    "@jsr/muni-town__leaf@0.2.0-preview.10": {
+      "integrity": "sha512-FzvspxIctRlwtGzaiJ+XX+0nVg3gV6PtwSmtYdYz7agtz3jBM1m25kClVaZI75Oxf8Oey6NUWv2c5aHVcyzmiQ==",
       "dependencies": [
         "@jsr/std__fs",
         "@jsr/std__path",
@@ -215,8 +215,8 @@
     "punycode.js@2.3.1": {
       "integrity": "sha512-uxFIHU0YlHYhDQtV4R9J6a52SLx28BCjT+4ieh7IGbgwVJWO+km431c4yRlREUAsAmt/uMjQUyQHNEPf0M39CA=="
     },
-    "svelte@5.23.0_acorn@8.14.1": {
-      "integrity": "sha512-v0lL3NuKontiCxholEiAXCB+BYbndlKbwlDMK0DS86WgGELMJSpyqCSbJeMEMBDwOglnS7Ar2Rq0wwa/z2L8Vg==",
+    "svelte@5.23.1_acorn@8.14.1": {
+      "integrity": "sha512-DUu3e5tQDO+PtKffjqJ548YfeKtw2Rqc9/+nlP26DZ0AopWTJNylkNnTOP/wcgIt1JSnovyISxEZ/lDR1OhbOw==",
       "dependencies": [
         "@ampproject/remapping",
         "@jridgewell/sourcemap-codec",
@@ -264,7 +264,7 @@
   "workspace": {
     "packageJson": {
       "dependencies": [
-        "npm:@jsr/muni-town__leaf@0.2.0-preview.9",
+        "npm:@jsr/muni-town__leaf@0.2.0-preview.10",
         "npm:typedoc@0.28.0"
       ]
     }
