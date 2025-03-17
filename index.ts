@@ -77,44 +77,6 @@ export class HasPeer {
   }
 }
 
-/**
- * A roomy instance.
- *
- * Contains everything necessary to interact with Roomy data
- * */
-export class Roomy extends HasPeer {
-  /** The ID of the catalog for the Roomy user. */
-  catalog: Entity;
-
-  private constructor(peer: Peer, catalog: Entity) {
-    super(peer);
-    this.peer = peer;
-    this.catalog = catalog;
-  }
-
-  /**
-   * Create a Roomy instance.
-   *
-   * @param peer You must first construct a Leaf {@linkcode Peer} and configure it's storage backend
-   * and syncer implementations before constructing the {@linkcode Roomy} instance.
-   * @param catalogId The `catalogId` ID of the entity that will be used to store the user's list of
-   * joined spaces, preferences, etc.
-   * */
-  static async init(peer: Peer, catalogId: IntoEntityId): Promise<Roomy> {
-    const catalog = await peer.open(intoEntityId(catalogId));
-    return new Roomy(peer, catalog);
-  }
-
-  async spaces(): Promise<Space[]> {
-    const spaces = this.catalog.getOrInit(Spaces);
-    return await Promise.all(
-      spaces.toArray().map(async (id) => {
-        return new Space(this.peer, await this.peer.open(id));
-      })
-    );
-  }
-}
-
 export class EntityWrapper extends HasPeer {
   entity: Entity;
   constructor(peer: Peer, entity: Entity) {
@@ -198,6 +160,30 @@ export class EntityList<T extends EntityWrapper> extends EntityWrapper {
   /** Re-order an item in the sidebar. */
   move(itemIdx: number, newIdx: number) {
     this.entity.getOrInit(this.#def).move(itemIdx, newIdx);
+  }
+}
+
+/**
+ * A roomy instance.
+ *
+ * Contains everything necessary to interact with Roomy data
+ * */
+export class Roomy extends EntityWrapper {
+  /**
+   * Create a Roomy instance.
+   *
+   * @param peer You must first construct a Leaf {@linkcode Peer} and configure it's storage backend
+   * and syncer implementations before constructing the {@linkcode Roomy} instance.
+   * @param catalogId The `catalogId` ID of the entity that will be used to store the user's list of
+   * joined spaces, preferences, etc.
+   * */
+  static async init(peer: Peer, catalogId: IntoEntityId): Promise<Roomy> {
+    const catalog = await peer.open(intoEntityId(catalogId));
+    return new Roomy(peer, catalog);
+  }
+
+  spaces(): EntityList<Space> {
+    return new EntityList(this.peer, this.entity, Spaces, Space);
   }
 }
 
