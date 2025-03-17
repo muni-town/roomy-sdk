@@ -4,7 +4,14 @@
   "export": {
     "./": "./index.ts"
   },
+  "scripts": {
+    "docs:build": "typedoc",
+    "docs:dev": "typedoc --watch"
+  },
   "dependencies": {
-    "@muni-town/leaf": "npm:@jsr/muni-town__leaf@0.2.0-preview.8"
+    "@muni-town/leaf": "npm:@jsr/muni-town__leaf@0.2.0-preview.9"
+  },
+  "devDependencies": {
+    "typedoc": "0.28.0"
   }
 }

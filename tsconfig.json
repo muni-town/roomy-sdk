@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "exactOptionalPropertyTypes": true,
+    "strictNullChecks": true,
+    "lib": [
+      "ESNext",
+      "DOM"
+    ],
+    // "types": [
+    //   "./types/extra.d.ts",
+    //   "./types/deno/lib.esnext",
+    //   "./types/deno/lib",
+    //   "./types/deno/lib.deno.unstable",
+    // ]
+  },
+  "exclude": [
+    "docs/",
+    "*.test.ts",
+  ]
+}

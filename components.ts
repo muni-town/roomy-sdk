@@ -32,8 +32,8 @@ export const ReplyTo = defComponent(
 
 /** Entities with this marker component have been soft deleted and should be shown as deleted
  * usually in the UI, even though the data is preserved. */
-export const SoftDelete = defComponent(
-  "softDelete:01JPFQK63H9W2RA8Q5GQ19S1DY",
+export const SoftDeleted = defComponent(
+  "softDeleted:01JPFQK63H9W2RA8Q5GQ19S1DY",
   Marker
 );
 
@@ -144,6 +144,12 @@ export const Reactions = defComponent(
   }>
 );
 
+/** The type of announcement for a {@linkcode ChannelAnnouncement}. */
+export type ChannelAnnouncementKind =
+  | "messageMoved"
+  | "messageDeleted"
+  | "threadCreated"
+  | string;
 /**
  * Metadata for a channel announcement, which is a message that might get inserted into a channel
  * timeline for various reasons.
@@ -151,7 +157,7 @@ export const Reactions = defComponent(
 export const ChannelAnnouncement = defComponent(
   "channelAnnouncement:01JPFTN90MGBMBCMCNJ4V65YF2",
   LoroMap<{
-    kind: "messageMoved" | "messageDeleted" | "threadCreated" | string;
+    kind: ChannelAnnouncementKind;
   }>,
   (map) => map.set("kind", "unknown")
 );
