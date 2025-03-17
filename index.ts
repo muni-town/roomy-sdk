@@ -67,6 +67,11 @@ export class HasPeer {
     return new Message(this.peer, ent);
   }
 
+  async createImage(): Promise<Image> {
+    const ent = await this.peer.open();
+    return new Image(this.peer, ent);
+  }
+
   async createChannel(): Promise<Channel> {
     const ent = await this.peer.open();
     return new Channel(this.peer, ent);
