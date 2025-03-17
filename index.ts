@@ -23,6 +23,7 @@ import {
   EntityIdStr,
   intoEntityId,
   IntoEntityId,
+  LoroList,
   LoroMovableList,
   LoroText,
   Peer,
@@ -33,7 +34,9 @@ import {
   ChannelAnnouncementKind,
   Channels,
   Content,
+  Did,
   Messages,
+  Reactions,
   ReplyTo,
   SoftDeleted,
   Spaces,
@@ -235,6 +238,10 @@ export type Thread = Channel;
 export class Message extends BasicMetaEntityWrapper {
   get body(): LoroText {
     return this.entity.getOrInit(Content);
+  }
+
+  get reactions(): LoroList<{ reaction: string; userDid: Did }> {
+    return this.entity.getOrInit(Reactions);
   }
 
   get replyTo(): EntityIdStr | undefined {
