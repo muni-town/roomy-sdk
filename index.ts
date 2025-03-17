@@ -93,6 +93,12 @@ export class EntityWrapper extends HasPeer {
     super(peer);
     this.entity = entity;
   }
+
+  cast<T extends EntityWrapper>(
+    constructor: new (peer: Peer, entity: Entity) => T
+  ): T {
+    return new constructor(this.peer, this.entity);
+  }
 }
 
 export class BasicMetaEntityWrapper extends EntityWrapper {
