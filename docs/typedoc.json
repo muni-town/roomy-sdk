@@ -9,6 +9,13 @@
   "projectDocuments": [
     "./examples.md"
   ],
+  "groupOrder": [
+    "Accessors",
+    "Methods",
+    "General",
+    "*",
+    "Advanced"
+  ],
   "searchInComments": true,
   "searchInDocuments": true,
   "cleanOutputDir": true,
