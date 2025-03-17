@@ -56,34 +56,11 @@ export class HasPeer {
     this.peer = peer;
   }
 
-  async createCategory(): Promise<Category> {
+  async create<T extends EntityWrapper>(
+    constructor: new (peer: Peer, entity: Entity) => T
+  ): Promise<T> {
     const ent = await this.peer.open();
-    ent.init(Channels);
-    return new Category(this.peer, ent);
-  }
-
-  async createMessage(): Promise<Message> {
-    const ent = await this.peer.open();
-    return new Message(this.peer, ent);
-  }
-
-  async createImage(): Promise<Image> {
-    const ent = await this.peer.open();
-    return new Image(this.peer, ent);
-  }
-
-  async createChannel(): Promise<Channel> {
-    const ent = await this.peer.open();
-    return new Channel(this.peer, ent);
-  }
-
-  /** Alias for {@linkcode createChannel}. */
-  createThread(): Promise<Thread> {
-    return this.createChannel();
-  }
-
-  async createSpace(): Promise<Space> {
-    return new Space(this.peer, await this.peer.open());
+    return new constructor(this.peer, ent);
   }
 }
 
