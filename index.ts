@@ -122,7 +122,6 @@ export class EntityList<T extends EntityWrapper> extends EntityWrapper {
     this.#factory = constructor;
   }
 
-  /** Get the list of items in the sidebar */
   async items(): Promise<T[]> {
     return await Promise.all(
       this.entity
@@ -134,23 +133,14 @@ export class EntityList<T extends EntityWrapper> extends EntityWrapper {
     );
   }
 
-  /** Add a new item to the sidebar. */
   add(item: SidebarItem) {
-    // Add it to the list of sidebar items
     this.entity.getOrInit(this.#def).push(item.entity.id.toString());
-
-    throw new Error("Unreachable");
   }
 
-  /**
-   * > **Note:** This does not delete the category / channel entity, it only removes it from the
-   * > sidebar list.
-   * */
   remove(itemIdx: number) {
     this.entity.getOrInit(this.#def).delete(itemIdx, 1);
   }
 
-  /** Re-order an item in the sidebar. */
   move(itemIdx: number, newIdx: number) {
     this.entity.getOrInit(this.#def).move(itemIdx, newIdx);
   }
