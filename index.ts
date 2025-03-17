@@ -42,6 +42,8 @@ import {
   Spaces,
   SpaceSidebarNavigation,
   Threads,
+  ImageUri,
+  Images,
 } from "./components.ts";
 
 export * from "@muni-town/leaf";
@@ -221,13 +223,13 @@ export class SidebarItem extends BasicMetaEntityWrapper {
   }
 }
 
-export class Category extends BasicMetaEntityWrapper {
+export class Category extends SidebarItem {
   get channels(): EntityList<Channel> {
     return new EntityList(this.peer, this.entity, Channels, Channel);
   }
 }
 
-export class Channel extends BasicMetaEntityWrapper {
+export class Channel extends SidebarItem {
   get messages(): EntityList<Message> {
     return new EntityList(this.peer, this.entity, Messages, Message);
   }
@@ -238,6 +240,10 @@ export type Thread = Channel;
 export class Message extends BasicMetaEntityWrapper {
   get body(): LoroText {
     return this.entity.getOrInit(Content);
+  }
+
+  get images(): EntityList<Image> {
+    return new EntityList(this.peer, this.entity, Images, Image);
   }
 
   get reactions(): LoroList<{ reaction: string; userDid: Did }> {
@@ -268,5 +274,32 @@ export class Announcement extends Message {
 
   get relatedMessages(): EntityList<Message> {
     return new EntityList(this.peer, this.entity, Messages, Message);
+  }
+}
+
+export class Image extends EntityWrapper {
+  get uri(): string {
+    return this.entity.getOrInit(ImageUri).get("uri");
+  }
+  set uri(uri: string) {
+    this.entity.getOrInit(ImageUri).set("uri", uri);
+  }
+  get alt(): string | undefined {
+    return this.entity.getOrInit(ImageUri).get("alt");
+  }
+  set alt(alt: string) {
+    this.entity.getOrInit(ImageUri).set("alt", alt);
+  }
+  get width(): number | undefined {
+    return this.entity.getOrInit(ImageUri).get("width");
+  }
+  set width(width: number | undefined) {
+    this.entity.getOrInit(ImageUri).set("width", width);
+  }
+  get height(): number | undefined {
+    return this.entity.getOrInit(ImageUri).get("height");
+  }
+  set height(height: number) {
+    this.entity.getOrInit(ImageUri).set("height", height);
   }
 }
