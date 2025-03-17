@@ -10,6 +10,14 @@ import { LoroList } from "./index.ts";
 
 /** A decentralized identifier ( DID ) */
 export type Did = `did:${string}:${string}`;
+/**
+ * The type for a string-encoded reaction.
+ * 
+ * It is a space-separated list with two fields:
+ * 1. The unicode symbol for the emoji or a URI describing the emoji.
+ * 2. The DID of the user that reacted with the emoji.
+ * */
+export type Reaction = `${string} ${Did}`;
 
 /** The display name, slug, short description, and image / icon URI of an entity. */
 export const BasicMeta = defComponent(
@@ -135,13 +143,7 @@ export const SpaceSidebarNavigation = defComponent(
 /** Emoji-type reactions to an entity. */
 export const Reactions = defComponent(
   "reactions:01JPFTQACDW0KM3857XWER87RR",
-  LoroList<{
-    /** The reaction that is being made. This should usually be a unicode emoji character, but we're
-     * leaving open the possibility to other kinds of reactions. */
-    reaction: string;
-    /** The person that reacted with the `reaction`. */
-    userDid: Did;
-  }>
+  LoroList<Reaction>
 );
 
 /** The type of announcement for a {@linkcode ChannelAnnouncement}. */

@@ -13,5 +13,5 @@
   "searchInDocuments": true,
   "cleanOutputDir": true,
   "readme": "./README.md",
-  "out": "../docs-dist"
+  "out": "../docs-dist",
 }
