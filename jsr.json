@@ -2,7 +2,7 @@
     "name": "@roomy-chat/sdk",
     "version": "0.1.0-preview.1",
     "exports": {
-        ".": "./index.ts"
+        ".": "./src/index.ts"
     },
     "license": "MIT or APACHE-2.0"
 }

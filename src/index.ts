@@ -44,10 +44,10 @@ import {
   Threads,
   ImageUri,
   Images,
-} from "./components.ts";
+} from "../src/components.ts";
 
 export * from "@muni-town/leaf";
-export * from "./components.ts";
+export * from "../src/components.ts";
 
 export class HasPeer {
   /** The leaf peer instance. */

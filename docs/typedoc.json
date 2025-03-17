@@ -1,0 +1,17 @@
+{
+  "name": "@roomy-chat/sdk",
+  "navigationLinks": {
+    "GitHub": "https://github.com/muni-town/leaf"
+  },
+  "entryPoints": [
+    "../src/index.ts",
+  ],
+  "projectDocuments": [
+    "./examples.md"
+  ],
+  "searchInComments": true,
+  "searchInDocuments": true,
+  "cleanOutputDir": true,
+  "readme": "./README.md",
+  "out": "../docs-dist"
+}
