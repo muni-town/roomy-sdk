@@ -106,6 +106,22 @@ export class HasPeer {
     const ent = await this.peer.open();
     return new constructor(this.peer, ent);
   }
+
+  /**
+   * Open an existing {@linkcode Entity} using it's ID.
+   *
+   * You provide an {@linkcode EntityWrapper} type like {@linkcode Space} or {@linkcode Message}
+   * that will be wrapped around the entity.
+   * 
+   * @group General
+   * */
+  async open<T extends EntityWrapper>(
+    constructor: EntityConstructor<T>,
+    id: IntoEntityId
+  ): Promise<T> {
+    const ent = await this.peer.open(intoEntityId(id));
+    return new constructor(this.peer, ent);
+  }
 }
 
 /**
@@ -162,12 +178,18 @@ export class EntityWrapper extends HasPeer {
    *
    * **Important:** You must call commit after making changes in order for those changes to be
    * immediately applied, reacted to, and synced to network and/or storage.
+   * 
+   * @group General
    */
   commit() {
     this.entity.commit();
   }
 
-  /** The string entity ID. */
+  /**
+   * The string entity ID.
+   * 
+   * @group General
+   */
   get id(): EntityIdStr {
     return this.entity.id.toString();
   }
