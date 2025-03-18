@@ -1,8 +1,8 @@
 {
   "name": "roomy-sdk",
   "license": "MIT or APACHE-2.0",
-  "export": {
-    "./": "./index.ts"
+  "exports": {
+    ".": "./src/index.ts"
   },
   "scripts": {
     "docs:build": "cd docs && typedoc",
