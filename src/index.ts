@@ -44,7 +44,10 @@ import {
   ImageUri,
   Images,
   Reaction,
-} from "../src/components.ts";
+  AuthorUris,
+  Uri,
+} from "./components.ts";
+export type { Uri } from "./components.ts";
 
 export * from "@muni-town/leaf";
 
@@ -55,7 +58,7 @@ export * from "@muni-town/leaf";
  *
  * @category Advanced
  * */
-export * as components from "../src/components.ts";
+export * as components from "./components.ts";
 
 /** A constructor for an {@linkcode EntityWrapper}. */
 export type EntityConstructor<T extends EntityWrapper> = new (
@@ -112,7 +115,7 @@ export class HasPeer {
    *
    * You provide an {@linkcode EntityWrapper} type like {@linkcode Space} or {@linkcode Message}
    * that will be wrapped around the entity.
-   * 
+   *
    * @group General
    * */
   async open<T extends EntityWrapper>(
@@ -178,7 +181,7 @@ export class EntityWrapper extends HasPeer {
    *
    * **Important:** You must call commit after making changes in order for those changes to be
    * immediately applied, reacted to, and synced to network and/or storage.
-   * 
+   *
    * @group General
    */
   commit() {
@@ -187,11 +190,19 @@ export class EntityWrapper extends HasPeer {
 
   /**
    * The string entity ID.
-   * 
+   *
    * @group General
    */
   get id(): EntityIdStr {
     return this.entity.id.toString();
+  }
+
+  /**
+   * Register a callback that will be run when the entity is committed.
+   * @returns A function that may be called to unregister the callback.
+   */
+  subscribe(listener: () => void): () => void {
+    return this.entity.subscribe(listener);
   }
 }
 
@@ -209,7 +220,7 @@ export class Deletable extends EntityWrapper {
   }
 }
 
-export class BasicMetaEntityWrapper extends Deletable {
+export class NamedEntity extends Deletable {
   get name(): string {
     return this.entity.getOrInit(BasicMeta).get("name");
   }
@@ -350,7 +361,7 @@ export class Roomy extends EntityWrapper {
 /**
  * A Roomy space.
  */
-export class Space extends BasicMetaEntityWrapper {
+export class Space extends NamedEntity {
   /** The items in the Roomy sidebar. */
   get sidebarItems(): EntityList<SidebarItem> {
     return new EntityList(
@@ -375,7 +386,7 @@ export class Space extends BasicMetaEntityWrapper {
 /**
  * An item that can be placed in the Roomy sidebar.
  */
-export class SidebarItem extends BasicMetaEntityWrapper {
+export class SidebarItem extends NamedEntity {
   get type(): "channel" | "category" {
     if (this.entity.has(Messages)) {
       return "category";
@@ -454,6 +465,10 @@ export class TimelineItem extends Deletable {
 
 /** A message usually sent in a channel or thread. */
 export class Message extends TimelineItem {
+  get authors(): LoroMovableList<Uri> {
+    return this.entity.getOrInit(AuthorUris);
+  }
+
   /** The main content body of the message. */
   get body(): LoroText {
     return this.entity.getOrInit(Content);

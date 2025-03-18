@@ -8,16 +8,16 @@ import {
 } from "@muni-town/leaf";
 import { LoroList } from "./index.ts";
 
-/** A decentralized identifier ( DID ) */
-export type Did = `did:${string}:${string}`;
+export type Uri = string;
+
 /**
  * The type for a string-encoded reaction.
- * 
+ *
  * It is a space-separated list with two fields:
  * 1. The unicode symbol for the emoji or a URI describing the emoji.
- * 2. The DID of the user that reacted with the emoji.
+ * 2. The URI of the user that reacted with the emoji.
  * */
-export type Reaction = `${string} ${Did}`;
+export type Reaction = `${string} ${Uri}`;
 
 /** The display name, slug, short description, and image / icon URI of an entity. */
 export const BasicMeta = defComponent(
@@ -112,9 +112,9 @@ export const Messages = defComponent(
 /**
  * The DIDs ( Decentralized Identifiers ) for the authors of the given entity.
  */
-export const AuthorDids = defComponent(
-  "authorDids:01JPEBV8TJ8YCXXYD156NJSR5Y",
-  LoroMovableList<Did>
+export const AuthorUris = defComponent(
+  "authorUris:01JPEBV8TJ8YCXXYD156NJSR5Y",
+  LoroMovableList<Uri>
 );
 
 /**
