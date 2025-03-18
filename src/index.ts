@@ -166,6 +166,11 @@ export class EntityWrapper extends HasPeer {
   commit() {
     this.entity.commit();
   }
+
+  /** The string entity ID. */
+  get id(): EntityIdStr {
+    return this.entity.id.toString();
+  }
 }
 
 export class Deletable extends EntityWrapper {
