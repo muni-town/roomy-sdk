@@ -35,7 +35,7 @@ import {
   Channels,
   Content,
   Messages,
-  Reactions,
+  Reactions as ReactionsComponent,
   ReplyTo,
   SoftDeleted,
   Spaces,
@@ -444,8 +444,8 @@ export type Thread = Channel;
  */
 export class TimelineItem extends Deletable {
   /** The emoji reactions to the message. */
-  get reactions(): LoroList<Reaction> {
-    return this.entity.getOrInit(Reactions);
+  get reactions(): Reactions {
+    return this.cast(Reactions);
   }
 
   /** The entity that this message was in reply to, if any. */
@@ -459,6 +459,46 @@ export class TimelineItem extends Deletable {
       this.entity.getOrInit(ReplyTo).set("entity", intoEntityId(id).toString());
     } else {
       this.entity.delete(ReplyTo);
+    }
+  }
+}
+
+/** Accessor reactions on an entity. */
+export class Reactions extends EntityWrapper {
+  /** Get all of the reactions, and the set of users that reacted with the given reaction. */
+  all(): Record<string, Set<string>> {
+    const list = this.entity.getOrInit(ReactionsComponent).toArray();
+    const reactions: Record<string, Set<string>> = {};
+    for (const raw of list) {
+      const [reaction, user] = raw.split(" ");
+      if (!reactions[reaction]) reactions[reaction] = new Set();
+      reactions[reaction].add(user);
+    }
+    return reactions;
+  }
+
+  /** Add a reaction. */
+  add(reaction: string, authorId: string) {
+    if (reaction.includes(" ") || authorId.includes(" "))
+      throw new Error("Reaction and Author ID must not contain spaces.");
+    const raw: Reaction = `${reaction} ${authorId}`;
+    const component = this.entity.getOrInit(ReactionsComponent);
+    const list = component.toArray();
+    if (!list.includes(raw)) {
+      component.push(raw);
+    }
+  }
+
+  /** Remove a reaction. */
+  remove(reaction: string, authorId: string) {
+    if (reaction.includes(" ") || authorId.includes(" "))
+      throw new Error("Reaction and Author ID must not contain spaces.");
+    const raw: `${string} ${string}` = `${reaction} ${authorId}`;
+    const component = this.entity.getOrInit(ReactionsComponent);
+    const list = component.toArray();
+    const idx = list.indexOf(raw);
+    if (idx !== -1) {
+      component.delete(idx, 1);
     }
   }
 }
