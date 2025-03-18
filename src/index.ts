@@ -156,6 +156,16 @@ export class EntityWrapper extends HasPeer {
   cast<T extends EntityWrapper>(constructor: EntityConstructor<T>): T {
     return new constructor(this.peer, this.entity);
   }
+
+  /**
+   * Commit any changes made to the entity.
+   *
+   * **Important:** You must call commit after making changes in order for those changes to be
+   * immediately applied, reacted to, and synced to network and/or storage.
+   */
+  commit() {
+    this.entity.commit();
+  }
 }
 
 export class Deletable extends EntityWrapper {
