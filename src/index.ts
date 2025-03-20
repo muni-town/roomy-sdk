@@ -46,6 +46,7 @@ import {
   Reaction,
   AuthorUris,
   Uri,
+  Admins,
 } from "./components.ts";
 export type { Uri } from "./components.ts";
 
@@ -220,7 +221,27 @@ export class Deletable extends EntityWrapper {
   }
 }
 
-export class NamedEntity extends Deletable {
+export class Administered extends Deletable {
+  /** The global list of channels in the space, separate from the i. */
+  get admins(): LoroMovableList<Uri> {
+    return this.entity.getOrInit(Admins);
+  }
+
+  /**
+   * Add all of the admins from another {@linkcode Administered} entity to the admins list for this
+   * entity.
+   * */
+  appendAdminsFrom(other: Administered) {
+    const currentAdmins = this.admins.toArray();
+    for (const admin of other.admins.toArray()) {
+      if (!currentAdmins.includes(admin)) {
+        this.admins.push(admin);
+      }
+    }
+  }
+}
+
+export class NamedEntity extends Administered {
   get name(): string {
     return this.entity.getOrInit(BasicMeta).get("name");
   }
@@ -325,6 +346,11 @@ export class EntityList<
   /** Get the raw {@linkcode LoroMovableList}. */
   rawList(): L {
     return this.entity.getOrInit(this.#def);
+  }
+
+  /** The number of items in the list. */
+  get length(): number {
+    return this.entity.getOrInit(this.#def).length;
   }
 
   /** Delete all of the items in the list and remove the component from the entity. */

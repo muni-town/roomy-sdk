@@ -140,6 +140,12 @@ export const SpaceSidebarNavigation = defComponent(
   LoroMovableList<EntityIdStr>
 );
 
+/** Contains the user IDs of the admins of the given entity. */
+export const Admins = defComponent(
+  "admins:01JPRKX4FVJ7GYV9AHRN12SSB2",
+  LoroMovableList<Uri>
+);
+
 /** Emoji-type reactions to an entity. */
 export const Reactions = defComponent(
   "reactions:01JPFTQACDW0KM3857XWER87RR",
