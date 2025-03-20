@@ -413,14 +413,14 @@ export class Space extends NamedEntity {
  * An item that can be placed in the Roomy sidebar.
  */
 export class SidebarItem extends NamedEntity {
-  get type(): "channel" | "category" {
+  get type(): "channel" | "category" | "unknown" {
     if (this.entity.has(Messages)) {
-      return "category";
-    } else if (this.entity.has(Channels)) {
       return "channel";
-    } else {
-      throw "Unknown sidebar item type";
+    } else if (this.entity.has(Channels)) {
+      return "category";
     }
+
+    return "unknown";
   }
 
   /**
@@ -444,6 +444,10 @@ export class SidebarItem extends NamedEntity {
  * A category is a container for channels that may be put in the Roomy sidebar.
  */
 export class Category extends SidebarItem {
+  constructor(peer: Peer, entity: Entity) {
+    super(peer, entity);
+    this.entity.init(Channels);
+  }
   get channels(): EntityList<Channel> {
     return new EntityList(this.peer, this.entity, Channels, Channel);
   }
@@ -455,6 +459,10 @@ export class Category extends SidebarItem {
  * This is quite generic and is the same type currently used for {@linkcode Thread}s.
  */
 export class Channel extends SidebarItem {
+  constructor(peer: Peer, entity: Entity) {
+    super(peer, entity);
+    this.entity.init(Messages);
+  }
   get messages(): EntityList<Message> {
     return new EntityList(this.peer, this.entity, Messages, Message);
   }
