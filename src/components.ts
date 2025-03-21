@@ -28,6 +28,8 @@ export const BasicMeta = defComponent(
     description?: string;
     /** The entity ID of an entity with an `ImageUri` component. */
     image?: EntityIdStr;
+    /** Unix timestamp for the date that the entity was created. */
+    createdDate?: number;
   }>,
   (map) => map.set("name", "Unnamed")
 );
@@ -92,8 +94,7 @@ export const Channels = defComponent(
 );
 
 /**
- * An ordered list of Roomy threads or thread {@linkcode Collection}s. Usually threads are sorted by
- * creation order with the latest ones at the end of the list.
+ * An ordered list of Roomy threads or thread {@linkcode Collection}s.
  * */
 export const Threads = defComponent(
   "threads:01JPEB05824ZR836QMV6B3E69F",
@@ -126,6 +127,39 @@ export const AuthorUris = defComponent(
 export const Content = defComponent(
   "content:01JPEBQARGPD0BQV7DYGC9TR5Z",
   LoroText
+);
+
+/**
+ * Temporary placeholder to stand in for {@linkcode Content} until we figure out how to convert our
+ * rich text to {@linkcode LoroText}.
+ * */
+export const JsonContent = defComponent(
+  "jsonContent:01JPWTN4PPNSMHQNWX1RFJAKHE",
+  LoroMap<{
+    /** The JSON encoded content from the rich text editor. */
+    content: string;
+  }>
+);
+
+/** Marker component for channels. */
+export const Channel = defComponent(
+  "channel:01JPTNSVAJ081EYCKMVRZK96A2",
+  Marker
+);
+
+/** Marker component for categories. */
+export const Category = defComponent(
+  "category:01JPTNVBZXTQ1JVJ0BSCGQ7ECK",
+  Marker
+);
+
+/** Marker component for threads. */
+export const Thread = defComponent("thread:01JPTP0SQY2E7EDTRFPAN7QRJK", Marker);
+
+/** Marker component for messages. */
+export const Message = defComponent(
+  "message:01JPWJKD9PAFWNWEKMEVTTF3QC",
+  Marker
 );
 
 /**

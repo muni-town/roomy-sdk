@@ -18,36 +18,16 @@
  */
 
 import {
-  ComponentDef,
+  type ComponentDef,
   Entity,
-  EntityIdStr,
+  type EntityIdStr,
+  type IntoEntityId,
   intoEntityId,
-  IntoEntityId,
   LoroList,
   LoroMovableList,
   LoroText,
   Peer,
 } from "@muni-town/leaf";
-import {
-  BasicMeta,
-  ChannelAnnouncement,
-  ChannelAnnouncementKind,
-  Channels,
-  Content,
-  Messages,
-  Reactions as ReactionsComponent,
-  ReplyTo,
-  SoftDeleted,
-  Spaces,
-  SpaceSidebarNavigation,
-  Threads,
-  ImageUri,
-  Images,
-  Reaction,
-  AuthorUris,
-  Uri,
-  Admins,
-} from "./components.ts";
 export type { Uri } from "./components.ts";
 
 export * from "@muni-town/leaf";
@@ -60,6 +40,7 @@ export * from "@muni-town/leaf";
  * @category Advanced
  * */
 export * as components from "./components.ts";
+import * as c from "./components.ts";
 
 /** A constructor for an {@linkcode EntityWrapper}. */
 export type EntityConstructor<T extends EntityWrapper> = new (
@@ -163,18 +144,43 @@ export class EntityWrapper extends HasPeer {
   /**
    * Cast from one {@linkcode EntityWrapper} type to another.
    *
-   * **Note:** Because the underlying {@linkcode Entity} is untyped and allows you to add any
-   * components to it, this cast will _always_ succeed. The Entity-Component design model allows
-   * entities to be understood by the components they have, instead of restricting them to represent
-   * a specific type with only certain components.
+   * Returns `undefined` if {@linkcode EntityWrapper#matches} returns `false` for the given
+   * constructor type.
    *
    * You will not usually need to cast entity types to other ones, but it can be useful in some
    * situations, where you would like to use another {@linkcode EntityWrapper} types's accessors.
    *
    * @group Advanced
    */
-  cast<T extends EntityWrapper>(constructor: EntityConstructor<T>): T {
+  tryCast<T extends EntityWrapper>(
+    constructor: EntityConstructor<T> & typeof EntityWrapper
+  ): T | undefined {
+    return this.matches(constructor)
+      ? new constructor(this.peer, this.entity)
+      : undefined;
+  }
+
+  forceCast<T extends EntityWrapper>(constructor: EntityConstructor<T>): T {
     return new constructor(this.peer, this.entity);
+  }
+
+  /**
+   * Checks whether the given entity matches this wrapper type.
+   *
+   * The default implementation is to return `true` for every entity, but some wrappers will
+   * override it to check for the existence of certain marker components.
+   * */
+  // deno-lint-ignore no-unused-vars
+  static matches(wrapper: EntityWrapper): boolean {
+    return true;
+  }
+
+  /**
+   * Checks whether the given wrapper type matches the this entity.
+   *
+   */
+  matches<T extends typeof EntityWrapper>(constructor: T): boolean {
+    return constructor.matches(this);
   }
 
   /**
@@ -209,22 +215,22 @@ export class EntityWrapper extends HasPeer {
 
 export class Deletable extends EntityWrapper {
   get softDeleted(): boolean {
-    return this.entity.has(SoftDeleted);
+    return this.entity.has(c.SoftDeleted);
   }
 
   set softDeleted(deleted: boolean) {
     if (deleted) {
-      this.entity.init(SoftDeleted);
+      this.entity.init(c.SoftDeleted);
     } else {
-      this.entity.delete(SoftDeleted);
+      this.entity.delete(c.SoftDeleted);
     }
   }
 }
 
 export class Administered extends Deletable {
   /** The global list of channels in the space, separate from the i. */
-  get admins(): LoroMovableList<Uri> {
-    return this.entity.getOrInit(Admins);
+  get admins(): LoroMovableList<c.Uri> {
+    return this.entity.getOrInit(c.Admins);
   }
 
   /**
@@ -243,17 +249,36 @@ export class Administered extends Deletable {
 
 export class NamedEntity extends Administered {
   get name(): string {
-    return this.entity.getOrInit(BasicMeta).get("name");
+    return this.entity.getOrInit(c.BasicMeta).get("name");
   }
   set name(name: string) {
-    this.entity.getOrInit(BasicMeta).set("name", name);
+    this.entity.getOrInit(c.BasicMeta).set("name", name);
+  }
+
+  get createdDate(): Date | undefined {
+    const unixTimestamp = this.entity.getOrInit(c.BasicMeta).get("createdDate");
+    return unixTimestamp ? new Date(unixTimestamp * 1000) : undefined;
+  }
+
+  set createdDate(date: Date | undefined) {
+    this.entity
+      .getOrInit(c.BasicMeta)
+      .set("createdDate", date ? date.getTime() / 1000 : undefined);
   }
 
   get description(): string | undefined {
-    return this.entity.getOrInit(BasicMeta).get("description");
+    return this.entity.getOrInit(c.BasicMeta).get("description");
   }
   set description(description: string | undefined) {
-    this.entity.getOrInit(BasicMeta).set("description", description);
+    this.entity.getOrInit(c.BasicMeta).set("description", description);
+  }
+
+  get image(): EntityIdStr | undefined {
+    return this.entity.getOrInit(c.BasicMeta).get("image");
+  }
+
+  set image(value: Image) {
+    this.entity.getOrInit(c.BasicMeta).set("image", value.id);
   }
 }
 
@@ -380,7 +405,7 @@ export class Roomy extends EntityWrapper {
 
   /** The list of spaces in the Roomy instance. */
   get spaces(): EntityList<Space> {
-    return new EntityList(this.peer, this.entity, Spaces, Space);
+    return new EntityList(this.peer, this.entity, c.Spaces, Space);
   }
 }
 
@@ -389,88 +414,79 @@ export class Roomy extends EntityWrapper {
  */
 export class Space extends NamedEntity {
   /** The items in the Roomy sidebar. */
-  get sidebarItems(): EntityList<SidebarItem> {
+  get sidebarItems(): EntityList<NamedEntity> {
     return new EntityList(
       this.peer,
       this.entity,
-      SpaceSidebarNavigation,
-      SidebarItem
+      c.SpaceSidebarNavigation,
+      NamedEntity
     );
   }
 
   /** The global list of channels in the space, separate from the i. */
   get channels(): EntityList<Channel> {
-    return new EntityList(this.peer, this.entity, Channels, Channel);
+    return new EntityList(this.peer, this.entity, c.Channels, Channel);
   }
 
   /** The global list of threads in the space. */
   get threads(): EntityList<Thread> {
-    return new EntityList(this.peer, this.entity, Threads, Thread);
-  }
-}
-
-/**
- * An item that can be placed in the Roomy sidebar.
- */
-export class SidebarItem extends NamedEntity {
-  get type(): "channel" | "category" | "unknown" {
-    if (this.entity.has(Messages)) {
-      return "channel";
-    } else if (this.entity.has(Channels)) {
-      return "category";
-    }
-
-    return "unknown";
-  }
-
-  /**
-   * Cast this sidebar item to a {@linkcode Channel}, returning `undefined` if it does not have a
-   * {@linkcode Messages} component and so does not appear to be a channel.
-   * */
-  asChannel(): Channel | undefined {
-    if (this.type == "channel") return this.cast(Channel);
-  }
-
-  /**
-   * Cast this sidebar item to a {@linkcode Category}, returning `undefined` if it does not have a
-   * {@linkcode Channels} component and so does not appear to be a category.
-   * */
-  asCategory(): Category | undefined {
-    if (this.type == "category") return this.cast(Category);
+    return new EntityList(this.peer, this.entity, c.Threads, Thread);
   }
 }
 
 /**
  * A category is a container for channels that may be put in the Roomy sidebar.
  */
-export class Category extends SidebarItem {
+export class Category extends NamedEntity {
   constructor(peer: Peer, entity: Entity) {
     super(peer, entity);
-    this.entity.init(Channels);
+    this.entity.init(c.Category);
   }
+  static override matches(wrapper: EntityWrapper): boolean {
+    return wrapper.entity.has(c.Category);
+  }
+
   get channels(): EntityList<Channel> {
-    return new EntityList(this.peer, this.entity, Channels, Channel);
+    return new EntityList(this.peer, this.entity, c.Channels, Channel);
+  }
+}
+
+export class Timeline extends NamedEntity {
+  get messages(): EntityList<TimelineItem> {
+    return new EntityList(this.peer, this.entity, c.Messages, Message);
   }
 }
 
 /**
- * A category is a container for messages.
- *
- * This is quite generic and is the same type currently used for {@linkcode Thread}s.
+ * A channel is a container for messages that is considered long-lived and usually created
+ * ahead-of-time for on-topic discussion.
  */
-export class Channel extends SidebarItem {
+export class Channel extends Timeline {
   constructor(peer: Peer, entity: Entity) {
     super(peer, entity);
-    this.entity.init(Messages);
+    this.entity.init(c.Channel);
   }
-  get messages(): EntityList<Message> {
-    return new EntityList(this.peer, this.entity, Messages, Message);
+  static override matches(wrapper: EntityWrapper): boolean {
+    return wrapper.entity.has(c.Channel);
+  }
+
+  get threads(): EntityList<Thread> {
+    return new EntityList(this.peer, this.entity, c.Threads, Thread);
   }
 }
-/** A thread, currently an alias for {@linkcode Channel}. */
-export const Thread = Channel;
-/** A thread, currently an alias for {@linkcode Channel}. */
-export type Thread = Channel;
+
+/**
+ * A thread is a container for messages that is considered short-lived and is often created ad-hoc.
+ */
+export class Thread extends Timeline {
+  constructor(peer: Peer, entity: Entity) {
+    super(peer, entity);
+    this.entity.init(c.Thread);
+  }
+  static override matches(wrapper: EntityWrapper): boolean {
+    return wrapper.entity.has(c.Thread);
+  }
+}
 
 /**
  * An entry that may appear in a {@linkcode Channel} or {@linkcode Thread} timeline, such as a
@@ -479,20 +495,27 @@ export type Thread = Channel;
 export class TimelineItem extends Deletable {
   /** The emoji reactions to the message. */
   get reactions(): Reactions {
-    return this.cast(Reactions);
+    return this.forceCast(Reactions);
   }
 
   /** The entity that this message was in reply to, if any. */
   get replyTo(): EntityIdStr | undefined {
-    return this.entity.get(ReplyTo)?.get("entity");
+    return this.entity.get(c.ReplyTo)?.get("entity");
   }
 
   /** Set the entity that this message was in reply to, if any. */
-  set replyTo(id: IntoEntityId | undefined) {
-    if (id) {
-      this.entity.getOrInit(ReplyTo).set("entity", intoEntityId(id).toString());
+  set replyTo(entity: EntityWrapper | IntoEntityId | undefined) {
+    if (entity) {
+      this.entity
+        .getOrInit(c.ReplyTo)
+        .set(
+          "entity",
+          entity instanceof EntityWrapper
+            ? entity.id
+            : intoEntityId(entity).toString()
+        );
     } else {
-      this.entity.delete(ReplyTo);
+      this.entity.delete(c.ReplyTo);
     }
   }
 }
@@ -501,7 +524,7 @@ export class TimelineItem extends Deletable {
 export class Reactions extends EntityWrapper {
   /** Get all of the reactions, and the set of users that reacted with the given reaction. */
   all(): Record<string, Set<string>> {
-    const list = this.entity.getOrInit(ReactionsComponent).toArray();
+    const list = this.entity.getOrInit(c.Reactions).toArray();
     const reactions: Record<string, Set<string>> = {};
     for (const raw of list) {
       const [reaction, user] = raw.split(" ");
@@ -511,12 +534,25 @@ export class Reactions extends EntityWrapper {
     return reactions;
   }
 
+  has(reaction: string, authorId: string): boolean {
+    const raw: `${string} ${string}` = `${reaction} ${authorId}`;
+    return this.entity.getOrInit(c.Reactions).toArray().includes(raw);
+  }
+
+  toggle(reaction: string, authorId: string) {
+    if (this.has(reaction, authorId)) {
+      this.remove(reaction, authorId);
+    } else {
+      this.add(reaction, authorId);
+    }
+  }
+
   /** Add a reaction. */
   add(reaction: string, authorId: string) {
     if (reaction.includes(" ") || authorId.includes(" "))
       throw new Error("Reaction and Author ID must not contain spaces.");
-    const raw: Reaction = `${reaction} ${authorId}`;
-    const component = this.entity.getOrInit(ReactionsComponent);
+    const raw: c.Reaction = `${reaction} ${authorId}`;
+    const component = this.entity.getOrInit(c.Reactions);
     const list = component.toArray();
     if (!list.includes(raw)) {
       component.push(raw);
@@ -528,7 +564,7 @@ export class Reactions extends EntityWrapper {
     if (reaction.includes(" ") || authorId.includes(" "))
       throw new Error("Reaction and Author ID must not contain spaces.");
     const raw: `${string} ${string}` = `${reaction} ${authorId}`;
-    const component = this.entity.getOrInit(ReactionsComponent);
+    const component = this.entity.getOrInit(c.Reactions);
     const list = component.toArray();
     const idx = list.indexOf(raw);
     if (idx !== -1) {
@@ -539,18 +575,34 @@ export class Reactions extends EntityWrapper {
 
 /** A message usually sent in a channel or thread. */
 export class Message extends TimelineItem {
-  get authors(): LoroMovableList<Uri> {
-    return this.entity.getOrInit(AuthorUris);
+  constructor(peer: Peer, entity: Entity) {
+    super(peer, entity);
+    this.entity.init(c.Message);
+  }
+  static override matches(wrapper: EntityWrapper): boolean {
+    return wrapper.entity.has(c.Message);
+  }
+
+  get authors(): LoroMovableList<c.Uri> {
+    return this.entity.getOrInit(c.AuthorUris);
   }
 
   /** The main content body of the message. */
   get body(): LoroText {
-    return this.entity.getOrInit(Content);
+    return this.entity.getOrInit(c.Content);
+  }
+
+  get bodyJson(): string {
+    return this.entity.getOrInit(c.JsonContent).get("content");
+  }
+
+  set bodyJson(jsonString: string) {
+    this.entity.getOrInit(c.JsonContent).set("content", jsonString);
   }
 
   /** A list of images attached to the message. */
   get images(): EntityList<Image> {
-    return new EntityList(this.peer, this.entity, Images, Image);
+    return new EntityList(this.peer, this.entity, c.Images, Image);
   }
 }
 
@@ -559,24 +611,32 @@ export class Message extends TimelineItem {
  * or {@linkcode Thread}.
  * */
 export class Announcement extends TimelineItem {
+  constructor(peer: Peer, entity: Entity) {
+    super(peer, entity);
+    this.entity.init(c.ChannelAnnouncement);
+  }
+  static override matches(wrapper: EntityWrapper): boolean {
+    return wrapper.entity.has(c.ChannelAnnouncement);
+  }
+
   /** The kind of announcement */
-  get kind(): ChannelAnnouncementKind {
-    return this.entity.getOrInit(ChannelAnnouncement).get("kind");
+  get kind(): c.ChannelAnnouncementKind {
+    return this.entity.getOrInit(c.ChannelAnnouncement).get("kind");
   }
 
   /** Set the kind of announcement */
-  set kind(kind: ChannelAnnouncementKind) {
-    this.entity.getOrInit(ChannelAnnouncement).set("kind", kind);
+  set kind(kind: c.ChannelAnnouncementKind) {
+    this.entity.getOrInit(c.ChannelAnnouncement).set("kind", kind);
   }
 
   /** The threads related to this announcement. */
   get relatedThreads(): EntityList<Thread> {
-    return new EntityList(this.peer, this.entity, Threads, Thread);
+    return new EntityList(this.peer, this.entity, c.Threads, Thread);
   }
 
   /** The messages related to this announcement. */
   get relatedMessages(): EntityList<Message> {
-    return new EntityList(this.peer, this.entity, Messages, Message);
+    return new EntityList(this.peer, this.entity, c.Messages, Message);
   }
 }
 
@@ -589,34 +649,34 @@ export class Image extends Deletable {
    * kind of URI.
    * */
   get uri(): string {
-    return this.entity.getOrInit(ImageUri).get("uri");
+    return this.entity.getOrInit(c.ImageUri).get("uri");
   }
   /** Set the URI of the image. */
   set uri(uri: string) {
-    this.entity.getOrInit(ImageUri).set("uri", uri);
+    this.entity.getOrInit(c.ImageUri).set("uri", uri);
   }
   /** The alt text of the image */
   get alt(): string | undefined {
-    return this.entity.getOrInit(ImageUri).get("alt");
+    return this.entity.getOrInit(c.ImageUri).get("alt");
   }
   /** Set the alt text of the image */
   set alt(alt: string) {
-    this.entity.getOrInit(ImageUri).set("alt", alt);
+    this.entity.getOrInit(c.ImageUri).set("alt", alt);
   }
   /** The width of the image. */
   get width(): number | undefined {
-    return this.entity.getOrInit(ImageUri).get("width");
+    return this.entity.getOrInit(c.ImageUri).get("width");
   }
   /** Set the width of the image. */
   set width(width: number | undefined) {
-    this.entity.getOrInit(ImageUri).set("width", width);
+    this.entity.getOrInit(c.ImageUri).set("width", width);
   }
   /** The height of the image. */
   get height(): number | undefined {
-    return this.entity.getOrInit(ImageUri).get("height");
+    return this.entity.getOrInit(c.ImageUri).get("height");
   }
   /** Set the height of the image. */
   set height(height: number) {
-    this.entity.getOrInit(ImageUri).set("height", height);
+    this.entity.getOrInit(c.ImageUri).set("height", height);
   }
 }
