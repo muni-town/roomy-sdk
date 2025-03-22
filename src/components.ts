@@ -30,6 +30,8 @@ export const BasicMeta = defComponent(
     image?: EntityIdStr;
     /** Unix timestamp for the date that the entity was created. */
     createdDate?: number;
+    /** Unix timestamp for the date that the entity was last updated. */
+    updatedDate?: number;
   }>,
   (map) => map.set("name", "Unnamed")
 );

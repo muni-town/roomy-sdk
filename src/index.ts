@@ -260,11 +260,20 @@ export class NamedEntity extends Administered {
     const unixTimestamp = this.entity.getOrInit(c.BasicMeta).get("createdDate");
     return unixTimestamp ? new Date(unixTimestamp * 1000) : undefined;
   }
-
   set createdDate(date: Date | undefined) {
     this.entity
       .getOrInit(c.BasicMeta)
       .set("createdDate", date ? date.getTime() / 1000 : undefined);
+  }
+
+  get updatedDate(): Date | undefined {
+    const unixTimestamp = this.entity.getOrInit(c.BasicMeta).get("updatedDate");
+    return unixTimestamp ? new Date(unixTimestamp * 1000) : undefined;
+  }
+  set updatedDate(date: Date | undefined) {
+    this.entity
+      .getOrInit(c.BasicMeta)
+      .set("updatedDate", date ? date.getTime() / 1000 : undefined);
   }
 
   get description(): string | undefined {
@@ -393,6 +402,21 @@ export class EntityList<
   /** Delete all of the items in the list and remove the component from the entity. */
   delete() {
     this.entity.delete(this.#def);
+  }
+}
+
+/** Helper class for an entity with a {@linkcode c.JsonContent} or {@linkcode c.Content}. */
+export class Content extends NamedEntity {
+  get body(): LoroText {
+    return this.entity.getOrInit(c.Content);
+  }
+
+  get bodyJson(): string {
+    return this.entity.getOrInit(c.JsonContent).get("content");
+  }
+
+  set bodyJson(jsonString: string) {
+    this.entity.getOrInit(c.JsonContent).set("content", jsonString);
   }
 }
 
