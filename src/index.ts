@@ -453,7 +453,7 @@ export class Category extends NamedEntity {
 
 export class Timeline extends NamedEntity {
   get timeline(): EntityList<TimelineItem> {
-    return new EntityList(this.peer, this.entity, c.Messages, Message);
+    return new EntityList(this.peer, this.entity, c.Timeline, TimelineItem);
   }
 }
 
@@ -641,7 +641,7 @@ export class Announcement extends TimelineItem {
 
   /** The messages related to this announcement. */
   get relatedMessages(): EntityList<Message> {
-    return new EntityList(this.peer, this.entity, c.Messages, Message);
+    return new EntityList(this.peer, this.entity, c.Timeline, Message);
   }
 }
 

@@ -75,7 +75,7 @@ export const Spaces = defComponent(
  * This entity represents a generic collection of other entities.
  *
  * This component can be used to implement things like pagination by putting a list of collection
- * entities, the pages, inside, for example, a {@linkcode Messages} component.
+ * entities, the pages, inside, for example, a {@linkcode Timeline} component.
  *
  * Any entity that has a {@linkcode Collection} component in the list could be treated as a page
  * where each link in the collection is the actual {@linkcode Message} in the list.
@@ -102,11 +102,13 @@ export const Threads = defComponent(
 );
 
 /**
- * An ordered list of Entity IDs for Roomy messages or message {@linkcode Collection}s. The latest
- * messages are at the end of the list.
+ * An ordered list of Entity IDs for timeline items or timeline item {@linkcode Collection}s. The
+ * latest items in the timeline are at the end of the list.
+ * 
+ * Things like Roomy chat messages and announcements both go into a timeline component.
  * */
-export const Messages = defComponent(
-  "messages:01JPEAH76WBQ4XYZQZT7MQT19V",
+export const Timeline = defComponent(
+  "timeline:01JPEAH76WBQ4XYZQZT7MQT19V",
   LoroMovableList<EntityIdStr>
 );
 
@@ -167,7 +169,7 @@ export const Message = defComponent(
  * The items in a Roomy space's channel / category list sidebar.
  *
  * For now, each item should be a channel or a category entity, i.e. it should either have a
- * {@linkcode Channels} component ( for a category ) or a {@linkcode Messages} component ( for a
+ * {@linkcode Channels} component ( for a category ) or a {@linkcode Timeline} component ( for a
  * channel ).
  */
 export const SpaceSidebarNavigation = defComponent(
