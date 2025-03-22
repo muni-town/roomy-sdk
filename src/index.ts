@@ -19,6 +19,7 @@
 
 import {
   type ComponentDef,
+  Cursor,
   Entity,
   type EntityIdStr,
   type IntoEntityId,
@@ -331,6 +332,17 @@ export class EntityList<
         .map(
           async (ent) => new this.#factory(this.peer, await this.peer.open(ent))
         )
+    );
+  }
+
+  /** Same as {@linkcode EntityList#items()}, but also returns a Loro Cursor. */
+  itemCursors(): Promise<[Cursor, T][]> {
+    const list = this.entity.getOrInit(this.#def);
+    return Promise.all(
+      Array.from({ length: list.length }, async (_, i) => [
+        list.getCursor(i)!,
+        new this.#factory(this.peer, await this.peer.open(list.get(i))),
+      ])
     );
   }
 
