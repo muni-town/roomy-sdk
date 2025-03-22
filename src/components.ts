@@ -138,7 +138,8 @@ export const JsonContent = defComponent(
   LoroMap<{
     /** The JSON encoded content from the rich text editor. */
     content: string;
-  }>
+  }>,
+  (map) => map.set("content", "{}")
 );
 
 /** Marker component for channels. */

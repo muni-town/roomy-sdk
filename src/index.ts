@@ -452,7 +452,7 @@ export class Category extends NamedEntity {
 }
 
 export class Timeline extends NamedEntity {
-  get messages(): EntityList<TimelineItem> {
+  get timeline(): EntityList<TimelineItem> {
     return new EntityList(this.peer, this.entity, c.Messages, Message);
   }
 }
@@ -492,7 +492,12 @@ export class Thread extends Timeline {
  * An entry that may appear in a {@linkcode Channel} or {@linkcode Thread} timeline, such as a
  * {@linkcode Message} or {@linkcode Announcement}.
  */
-export class TimelineItem extends Deletable {
+// TODO: Think about this: we are extending named entity to get the createdDate meta, but we don't
+// actually have a name for chat messages usually. We should probably either make the created date
+// separate from the component with the name in it, or make the name optional.
+//
+// At this point I'm thinking about making the name optional.
+export class TimelineItem extends NamedEntity {
   /** The emoji reactions to the message. */
   get reactions(): Reactions {
     return this.forceCast(Reactions);
