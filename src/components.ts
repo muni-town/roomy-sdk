@@ -36,6 +36,20 @@ export const BasicMeta = defComponent(
   (map) => map.set("name", "Unnamed")
 );
 
+/**
+ * The DNS handles that are associated to this entity. The first one is considered the primary one.
+ *
+ * A handle being in this list doesn't mean it's verified, and a DNS entry pointing at this entity
+ * alone doesn't mean that DNS entry is verified either.
+ *
+ * A handle is verified if the entity has a `Handles` component containing that domain and there is
+ * a `_leaf.example.handle` DNS TXT record containing `"id=[the Leaf Entity Id string]"`.
+ * */
+export const Handles = defComponent(
+  "handles:01JQ1XHJAM64ZC8W2CBSWA9FK6",
+  LoroList<string>
+);
+
 /** This entity is in reply to another entity. */
 export const ReplyTo = defComponent(
   "replyTo:01JPFR9RXR4BECAMCEH0M8XPQY",
@@ -106,7 +120,7 @@ export const Threads = defComponent(
 /**
  * An ordered list of Entity IDs for timeline items or timeline item {@linkcode Collection}s. The
  * latest items in the timeline are at the end of the list.
- * 
+ *
  * Things like Roomy chat messages and announcements both go into a timeline component.
  * */
 export const Timeline = defComponent(

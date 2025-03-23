@@ -256,6 +256,10 @@ export class NamedEntity extends Administered {
     this.entity.getOrInit(c.BasicMeta).set("name", name);
   }
 
+  get handles(): LoroList<string> {
+    return this.entity.getOrInit(c.Handles);
+  }
+
   get createdDate(): Date | undefined {
     const unixTimestamp = this.entity.getOrInit(c.BasicMeta).get("createdDate");
     return unixTimestamp ? new Date(unixTimestamp * 1000) : undefined;
