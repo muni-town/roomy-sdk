@@ -1,6 +1,6 @@
 {
   "name": "roomy-sdk",
-  "license": "MIT or APACHE-2.0",
+  "license": "MPL-2.0",
   "exports": {
     ".": "./src/index.ts"
   },
