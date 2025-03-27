@@ -115,8 +115,8 @@ export const Channels = defComponent(
  *
  * Highlights can be used to collect links in a space or pins in a channel.
  * */
-export const HighlightedMessages = defComponent(
-  "highlightedMessages:01JQC43903866AKE4CX1ZZJ2RD",
+export const HighlightedItem = defComponent(
+  "highlightedItem:01JQC43903866AKE4CX1ZZJ2RD",
   LoroMovableList<EntityIdStr>
 );
 
