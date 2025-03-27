@@ -110,6 +110,17 @@ export const Channels = defComponent(
 );
 
 /**
+ * An ordered list of Entity IDs for a {@linkcode Collection} of highlighted
+ * Roomy messages or announcements.
+ *
+ * Highlights can be used to collect links in a space or pins in a channel.
+ * */
+export const HighlightedMessages = defComponent(
+  "highlightedMessages:01JQC43903866AKE4CX1ZZJ2RD",
+  LoroMovableList<EntityIdStr>
+);
+
+/**
  * An ordered list of Roomy threads or thread {@linkcode Collection}s.
  * */
 export const Threads = defComponent(

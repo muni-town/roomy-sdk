@@ -462,6 +462,15 @@ export class Space extends NamedEntity {
       NamedEntity
     );
   }
+  /** All highlighted messages or announcements in a Roomy space. */
+  get highlights(): EntityList<NamedEntity> {
+    return new EntityList(
+      this.peer,
+      this.entity,
+      c.HighlightedMessages,
+      NamedEntity
+    );
+  }
 
   /** The global list of channels in the space, separate from the i. */
   get channels(): EntityList<Channel> {
