@@ -117,6 +117,15 @@ export const Threads = defComponent(
   LoroMovableList<EntityIdStr>
 );
 
+
+/**
+ * An ordered list of Wikis {@linkcode Collection}s.
+ * */
+export const WikiPages = defComponent(
+  "wikiPages:01JQB6XWKQZ3PV4RW3Z3R35KD3",
+  LoroMovableList<EntityIdStr>
+);
+
 /**
  * An ordered list of Entity IDs for timeline items or timeline item {@linkcode Collection}s. The
  * latest items in the timeline are at the end of the list.
@@ -180,6 +189,11 @@ export const Message = defComponent(
   "message:01JPWJKD9PAFWNWEKMEVTTF3QC",
   Marker
 );
+
+export const WikiPage = defComponent(
+  'wikiPage:01JQB6TEDA9C2FD15WP1N4JPRP',
+  Marker
+)
 
 /**
  * The items in a Roomy space's channel / category list sidebar.
