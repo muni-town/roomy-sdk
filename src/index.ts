@@ -462,6 +462,15 @@ export class Space extends NamedEntity {
       NamedEntity
     );
   }
+  /** All highlighted messages or announcements in a Roomy space. */
+  get highlights(): EntityList<TimelineItem> {
+    return new EntityList(
+      this.peer,
+      this.entity,
+      c.HighlightedItem,
+      TimelineItem
+    );
+  }
 
   get wikipages(): EntityList<NamedEntity> {
     return new EntityList(
