@@ -463,13 +463,8 @@ export class Space extends NamedEntity {
     );
   }
 
-  get wikipages(): EntityList<NamedEntity> {
-    return new EntityList(
-      this.peer,
-      this.entity,
-      c.WikiPages,
-      NamedEntity
-    );
+  get wikipages(): EntityList<WikiPage> {
+    return new EntityList(this.peer, this.entity, c.WikiPages, WikiPage);
   }
 
   /** The global list of channels in the space, separate from the i. */
@@ -504,9 +499,17 @@ export class WikiPage extends NamedEntity {
     super(peer, entity);
     this.entity.init(c.WikiPage);
   }
-  
+
   static override matches(wrapper: EntityWrapper): boolean {
     return wrapper.entity.has(c.WikiPage);
+  }
+
+  get bodyJson(): string {
+    return this.entity.getOrInit(c.JsonContent).get("content");
+  }
+
+  set bodyJson(jsonString: string) {
+    this.entity.getOrInit(c.JsonContent).set("content", jsonString);
   }
 
   get body(): LoroText {
@@ -537,12 +540,7 @@ export class Channel extends Timeline {
     return new EntityList(this.peer, this.entity, c.Threads, Thread);
   }
   get wikipages(): EntityList<WikiPage> {
-    return new EntityList(
-      this.peer,
-      this.entity,
-      c.WikiPages,
-      WikiPage
-    );
+    return new EntityList(this.peer, this.entity, c.WikiPages, WikiPage);
   }
 }
 
