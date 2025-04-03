@@ -1,6 +1,6 @@
 {
     "name": "@roomy-chat/sdk",
-    "version": "0.1.0-preview.11",
+    "version": "0.1.0-preview.12",
     "exports": {
         ".": "./src/index.ts"
     },
