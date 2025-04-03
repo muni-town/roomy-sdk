@@ -25,6 +25,7 @@ import {
   type IntoEntityId,
   intoEntityId,
   LoroList,
+  LoroMap,
   LoroMovableList,
   LoroText,
   Peer,
@@ -229,9 +230,15 @@ export class Deletable extends EntityWrapper {
 }
 
 export class Administered extends Deletable {
-  /** The global list of channels in the space, separate from the i. */
+  /** The user IDs of the admins of this entity. */
+  /** The user IDs of the admins of this entity. */
   get admins(): LoroMovableList<c.Uri> {
     return this.entity.getOrInit(c.Admins);
+  }
+
+  /** The set of user IDs that have been banned from this entity. */
+  get bans(): LoroMap<{ [id: c.Uri]: boolean | undefined }> {
+    return this.entity.getOrInit(c.Bans);
   }
 
   /**

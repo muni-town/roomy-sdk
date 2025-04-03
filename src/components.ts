@@ -117,7 +117,6 @@ export const Threads = defComponent(
   LoroMovableList<EntityIdStr>
 );
 
-
 /**
  * An ordered list of Wikis {@linkcode Collection}s.
  * */
@@ -191,9 +190,9 @@ export const Message = defComponent(
 );
 
 export const WikiPage = defComponent(
-  'wikiPage:01JQB6TEDA9C2FD15WP1N4JPRP',
+  "wikiPage:01JQB6TEDA9C2FD15WP1N4JPRP",
   Marker
-)
+);
 
 /**
  * The items in a Roomy space's channel / category list sidebar.
@@ -211,6 +210,12 @@ export const SpaceSidebarNavigation = defComponent(
 export const Admins = defComponent(
   "admins:01JPRKX4FVJ7GYV9AHRN12SSB2",
   LoroMovableList<Uri>
+);
+
+/** Contains the user IDs of people banned from the entity. */
+export const Bans = defComponent(
+  "bans:01JQYDKV119QNZF7JH4192Y0QJ",
+  LoroMap<{ [id: Uri]: boolean | undefined }>
 );
 
 /** Emoji-type reactions to an entity. */
