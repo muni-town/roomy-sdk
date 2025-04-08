@@ -232,13 +232,15 @@ export class Deletable extends EntityWrapper {
 export class Administered extends Deletable {
   /** The user IDs of the admins of this entity. */
   /** The user IDs of the admins of this entity. */
-  get admins(): LoroMovableList<c.Uri> {
-    return this.entity.getOrInit(c.Admins);
+  admins<R>(handler: (admins: LoroMovableList<c.Uri>) => R): R {
+    return this.entity.getOrInit(c.Admins, handler);
   }
 
   /** The set of user IDs that have been banned from this entity. */
-  get bans(): LoroMap<{ [id: c.Uri]: boolean | undefined }> {
-    return this.entity.getOrInit(c.Bans);
+  bans<R>(
+    handler: (bans: LoroMap<{ [id: c.Uri]: boolean | undefined }>) => R
+  ): R {
+    return this.entity.getOrInit(c.Bans, handler);
   }
 
   /**
@@ -246,10 +248,10 @@ export class Administered extends Deletable {
    * entity.
    * */
   appendAdminsFrom(other: Administered) {
-    const currentAdmins = this.admins.toArray();
-    for (const admin of other.admins.toArray()) {
+    const currentAdmins = this.admins((x) => x.toArray());
+    for (const admin of other.admins((x) => x.toArray())) {
       if (!currentAdmins.includes(admin)) {
-        this.admins.push(admin);
+        this.admins((x) => x.push(admin));
       }
     }
   }
@@ -257,49 +259,55 @@ export class Administered extends Deletable {
 
 export class NamedEntity extends Administered {
   get name(): string {
-    return this.entity.getOrInit(c.BasicMeta).get("name");
+    return this.entity.getOrInit(c.BasicMeta, (x) => x.get("name"));
   }
   set name(name: string) {
-    this.entity.getOrInit(c.BasicMeta).set("name", name);
+    this.entity.getOrInit(c.BasicMeta, (x) => x.set("name", name));
   }
 
-  get handles(): LoroList<string> {
-    return this.entity.getOrInit(c.Handles);
+  handles<R>(handler: (x: LoroList<string>) => R): R {
+    return this.entity.getOrInit(c.Handles, handler);
   }
 
   get createdDate(): Date | undefined {
-    const unixTimestamp = this.entity.getOrInit(c.BasicMeta).get("createdDate");
+    const unixTimestamp = this.entity.getOrInit(c.BasicMeta, (x) =>
+      x.get("createdDate")
+    );
     return unixTimestamp ? new Date(unixTimestamp * 1000) : undefined;
   }
   set createdDate(date: Date | undefined) {
-    this.entity
-      .getOrInit(c.BasicMeta)
-      .set("createdDate", date ? date.getTime() / 1000 : undefined);
+    this.entity.getOrInit(c.BasicMeta, (x) =>
+      x.set("createdDate", date ? date.getTime() / 1000 : undefined)
+    );
   }
 
   get updatedDate(): Date | undefined {
-    const unixTimestamp = this.entity.getOrInit(c.BasicMeta).get("updatedDate");
+    const unixTimestamp = this.entity.getOrInit(c.BasicMeta, (x) =>
+      x.get("updatedDate")
+    );
     return unixTimestamp ? new Date(unixTimestamp * 1000) : undefined;
   }
   set updatedDate(date: Date | undefined) {
-    this.entity
-      .getOrInit(c.BasicMeta)
-      .set("updatedDate", date ? date.getTime() / 1000 : undefined);
+    this.entity.getOrInit(c.BasicMeta, (x) =>
+      x.set("updatedDate", date ? date.getTime() / 1000 : undefined)
+    );
   }
 
   get description(): string | undefined {
-    return this.entity.getOrInit(c.BasicMeta).get("description");
+    return this.entity.getOrInit(c.BasicMeta, (x) => x.get("description"));
   }
   set description(description: string | undefined) {
-    this.entity.getOrInit(c.BasicMeta).set("description", description);
+    this.entity.getOrInit(c.BasicMeta, (x) =>
+      x.set("description", description)
+    );
   }
 
   get image(): EntityIdStr | undefined {
-    return this.entity.getOrInit(c.BasicMeta).get("image");
+    return this.entity.getOrInit(c.BasicMeta, (x) => x.get("image"));
   }
 
   set image(value: Image) {
-    this.entity.getOrInit(c.BasicMeta).set("image", value.id);
+    this.entity.getOrInit(c.BasicMeta, (x) => x.set("image", value.id));
   }
 }
 
@@ -340,45 +348,50 @@ export class EntityList<
 
   /** Get the list of entity IDs in the list. */
   ids(): EntityIdStr[] {
-    return this.entity.getOrInit(this.#def).toArray();
+    return this.entity.getOrInit(this.#def, (x) => x.toArray());
   }
 
   /** Load the full list of entities as an array. */
   async items(): Promise<T[]> {
     return await Promise.all(
-      this.entity
-        .getOrInit(this.#def)
-        .toArray()
-        .map(
-          async (ent) => new this.#factory(this.peer, await this.peer.open(ent))
-        )
+      this.entity.getOrInit(this.#def, (x) =>
+        x
+          .toArray()
+          .map(
+            async (ent) =>
+              new this.#factory(this.peer, await this.peer.open(ent))
+          )
+      )
     );
   }
 
   /** Same as {@linkcode EntityList#items()}, but also returns a Loro Cursor. */
   itemCursors(): Promise<[Cursor, T][]> {
-    const list = this.entity.getOrInit(this.#def);
-    return Promise.all(
-      Array.from({ length: list.length }, async (_, i) => [
-        list.getCursor(i)!,
-        new this.#factory(this.peer, await this.peer.open(list.get(i))),
-      ])
+    return this.entity.getOrInit(this.#def, (list) =>
+      Promise.all(
+        Array.from({ length: list.length }, async (_, i) => [
+          list.getCursor(i)!,
+          new this.#factory(this.peer, await this.peer.open(list.get(i))),
+        ])
+      )
     );
   }
 
   /** Add an entity to the end of the list. */
   push(item: T) {
-    this.entity.getOrInit(this.#def).push(item.entity.id.toString());
+    this.entity.getOrInit(this.#def, (x) => x.push(item.entity.id.toString()));
   }
 
   /** Add an entity to the specified index in the list. */
   insert(index: number, item: T) {
-    this.entity.getOrInit(this.#def).insert(index, item.entity.id.toString());
+    this.entity.getOrInit(this.#def, (x) =>
+      x.insert(index, item.entity.id.toString())
+    );
   }
 
   /** Remove an entity from the list. */
   remove(itemIdx: number) {
-    this.entity.getOrInit(this.#def).delete(itemIdx, 1);
+    this.entity.getOrInit(this.#def, (x) => x.delete(itemIdx, 1));
   }
 
   /** Move an entity in the list from `itemIdx` to `newIdx`. */
@@ -388,26 +401,26 @@ export class EntityList<
     itemIdx: L extends LoroMovableList ? number : never,
     newIdx: number
   ): L extends LoroMovableList ? void : never {
-    const list = this.entity.getOrInit(this.#def);
+    return this.entity.getOrInit(this.#def, (list) => {
+      if (list instanceof LoroMovableList) {
+        list.move(itemIdx, newIdx);
+      } else {
+        throw "Cannot use move function in an immovable list.";
+      }
 
-    if (list instanceof LoroMovableList) {
-      list.move(itemIdx, newIdx);
-    } else {
-      throw "Cannot use move function in an immovable list.";
-    }
-
-    // deno-lint-ignore no-explicit-any
-    return undefined as any;
+      // deno-lint-ignore no-explicit-any
+      return undefined as any;
+    });
   }
 
   /** Get the raw {@linkcode LoroMovableList}. */
-  rawList(): L {
-    return this.entity.getOrInit(this.#def);
+  rawList<R>(handler: (x: L) => R): R {
+    return this.entity.getOrInit(this.#def, handler);
   }
 
   /** The number of items in the list. */
   get length(): number {
-    return this.entity.getOrInit(this.#def).length;
+    return this.entity.getOrInit(this.#def, (x) => x.length);
   }
 
   /** Delete all of the items in the list and remove the component from the entity. */
@@ -418,16 +431,16 @@ export class EntityList<
 
 /** Helper class for an entity with a {@linkcode c.JsonContent} or {@linkcode c.Content}. */
 export class Content extends NamedEntity {
-  get body(): LoroText {
-    return this.entity.getOrInit(c.Content);
+  body<R>(handler: (x: LoroText) => R): R {
+    return this.entity.getOrInit(c.Content, handler);
   }
 
   get bodyJson(): string {
-    return this.entity.getOrInit(c.JsonContent).get("content");
+    return this.entity.getOrInit(c.JsonContent, (x) => x.get("content"));
   }
 
   set bodyJson(jsonString: string) {
-    this.entity.getOrInit(c.JsonContent).set("content", jsonString);
+    this.entity.getOrInit(c.JsonContent, (x) => x.set("content", jsonString));
   }
 }
 
@@ -512,15 +525,15 @@ export class WikiPage extends NamedEntity {
   }
 
   get bodyJson(): string {
-    return this.entity.getOrInit(c.JsonContent).get("content");
+    return this.entity.getOrInit(c.JsonContent, (x) => x.get("content"));
   }
 
   set bodyJson(jsonString: string) {
-    this.entity.getOrInit(c.JsonContent).set("content", jsonString);
+    this.entity.getOrInit(c.JsonContent, (x) => x.set("content", jsonString));
   }
 
-  get body(): LoroText {
-    return this.entity.getOrInit(c.Content);
+  body<R>(handler: (x: LoroText) => R): R {
+    return this.entity.getOrInit(c.Content, handler);
   }
 }
 
@@ -581,20 +594,20 @@ export class TimelineItem extends NamedEntity {
 
   /** The entity that this message was in reply to, if any. */
   get replyTo(): EntityIdStr | undefined {
-    return this.entity.get(c.ReplyTo)?.get("entity");
+    return this.entity.get(c.ReplyTo, (x) => x?.get("entity"));
   }
 
   /** Set the entity that this message was in reply to, if any. */
   set replyTo(entity: EntityWrapper | IntoEntityId | undefined) {
     if (entity) {
-      this.entity
-        .getOrInit(c.ReplyTo)
-        .set(
+      this.entity.getOrInit(c.ReplyTo, (x) =>
+        x.set(
           "entity",
           entity instanceof EntityWrapper
             ? entity.id
             : intoEntityId(entity).toString()
-        );
+        )
+      );
     } else {
       this.entity.delete(c.ReplyTo);
     }
@@ -605,7 +618,7 @@ export class TimelineItem extends NamedEntity {
 export class Reactions extends EntityWrapper {
   /** Get all of the reactions, and the set of users that reacted with the given reaction. */
   all(): Record<string, Set<string>> {
-    const list = this.entity.getOrInit(c.Reactions).toArray();
+    const list = this.entity.getOrInit(c.Reactions, (x) => x.toArray());
     const reactions: Record<string, Set<string>> = {};
     for (const raw of list) {
       const [reaction, user] = raw.split(" ");
@@ -617,7 +630,7 @@ export class Reactions extends EntityWrapper {
 
   has(reaction: string, authorId: string): boolean {
     const raw: `${string} ${string}` = `${reaction} ${authorId}`;
-    return this.entity.getOrInit(c.Reactions).toArray().includes(raw);
+    return this.entity.getOrInit(c.Reactions, (x) => x.toArray().includes(raw));
   }
 
   toggle(reaction: string, authorId: string) {
@@ -633,11 +646,12 @@ export class Reactions extends EntityWrapper {
     if (reaction.includes(" ") || authorId.includes(" "))
       throw new Error("Reaction and Author ID must not contain spaces.");
     const raw: c.Reaction = `${reaction} ${authorId}`;
-    const component = this.entity.getOrInit(c.Reactions);
-    const list = component.toArray();
-    if (!list.includes(raw)) {
-      component.push(raw);
-    }
+    const component = this.entity.getOrInit(c.Reactions, (component) => {
+      const list = component.toArray();
+      if (!list.includes(raw)) {
+        component.push(raw);
+      }
+    });
   }
 
   /** Remove a reaction. */
@@ -645,12 +659,13 @@ export class Reactions extends EntityWrapper {
     if (reaction.includes(" ") || authorId.includes(" "))
       throw new Error("Reaction and Author ID must not contain spaces.");
     const raw: `${string} ${string}` = `${reaction} ${authorId}`;
-    const component = this.entity.getOrInit(c.Reactions);
-    const list = component.toArray();
-    const idx = list.indexOf(raw);
-    if (idx !== -1) {
-      component.delete(idx, 1);
-    }
+    this.entity.getOrInit(c.Reactions, (component) => {
+      const list = component.toArray();
+      const idx = list.indexOf(raw);
+      if (idx !== -1) {
+        component.delete(idx, 1);
+      }
+    });
   }
 }
 
@@ -664,21 +679,21 @@ export class Message extends TimelineItem {
     return wrapper.entity.has(c.Message);
   }
 
-  get authors(): LoroMovableList<c.Uri> {
-    return this.entity.getOrInit(c.AuthorUris);
+  authors<R>(handler: (x: LoroMovableList<c.Uri>) => R): R {
+    return this.entity.getOrInit(c.AuthorUris, handler);
   }
 
   /** The main content body of the message. */
-  get body(): LoroText {
-    return this.entity.getOrInit(c.Content);
+  body<R>(handler: (x: LoroText) => R): R {
+    return this.entity.getOrInit(c.Content, handler);
   }
 
   get bodyJson(): string {
-    return this.entity.getOrInit(c.JsonContent).get("content");
+    return this.entity.getOrInit(c.JsonContent, (x) => x.get("content"));
   }
 
   set bodyJson(jsonString: string) {
-    this.entity.getOrInit(c.JsonContent).set("content", jsonString);
+    this.entity.getOrInit(c.JsonContent, (x) => x.set("content", jsonString));
   }
 
   /** A list of images attached to the message. */
@@ -702,12 +717,12 @@ export class Announcement extends TimelineItem {
 
   /** The kind of announcement */
   get kind(): c.ChannelAnnouncementKind {
-    return this.entity.getOrInit(c.ChannelAnnouncement).get("kind");
+    return this.entity.getOrInit(c.ChannelAnnouncement, (x) => x.get("kind"));
   }
 
   /** Set the kind of announcement */
   set kind(kind: c.ChannelAnnouncementKind) {
-    this.entity.getOrInit(c.ChannelAnnouncement).set("kind", kind);
+    this.entity.getOrInit(c.ChannelAnnouncement, (x) => x.set("kind", kind));
   }
 
   /** The threads related to this announcement. */
@@ -730,34 +745,34 @@ export class Image extends Deletable {
    * kind of URI.
    * */
   get uri(): string {
-    return this.entity.getOrInit(c.ImageUri).get("uri");
+    return this.entity.getOrInit(c.ImageUri, (x) => x.get("uri"));
   }
   /** Set the URI of the image. */
   set uri(uri: string) {
-    this.entity.getOrInit(c.ImageUri).set("uri", uri);
+    this.entity.getOrInit(c.ImageUri, (x) => x.set("uri", uri));
   }
   /** The alt text of the image */
   get alt(): string | undefined {
-    return this.entity.getOrInit(c.ImageUri).get("alt");
+    return this.entity.getOrInit(c.ImageUri, (x) => x.get("alt"));
   }
   /** Set the alt text of the image */
   set alt(alt: string) {
-    this.entity.getOrInit(c.ImageUri).set("alt", alt);
+    this.entity.getOrInit(c.ImageUri, (x) => x.set("alt", alt));
   }
   /** The width of the image. */
   get width(): number | undefined {
-    return this.entity.getOrInit(c.ImageUri).get("width");
+    return this.entity.getOrInit(c.ImageUri, (x) => x.get("width"));
   }
   /** Set the width of the image. */
   set width(width: number | undefined) {
-    this.entity.getOrInit(c.ImageUri).set("width", width);
+    this.entity.getOrInit(c.ImageUri, (x) => x.set("width", width));
   }
   /** The height of the image. */
   get height(): number | undefined {
-    return this.entity.getOrInit(c.ImageUri).get("height");
+    return this.entity.getOrInit(c.ImageUri, (x) => x.get("height"));
   }
   /** Set the height of the image. */
   set height(height: number) {
-    this.entity.getOrInit(c.ImageUri).set("height", height);
+    this.entity.getOrInit(c.ImageUri, (x) => x.set("height", height));
   }
 }
