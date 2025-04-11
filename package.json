@@ -9,7 +9,7 @@
     "docs:dev": "cd docs && typedoc --watch"
   },
   "dependencies": {
-    "@muni-town/leaf": "npm:@jsr/muni-town__leaf@0.2.0-preview.13"
+    "@muni-town/leaf": "npm:@jsr/muni-town__leaf@0.2.0-preview.15"
   },
   "devDependencies": {
     "typedoc": "0.28.0"
