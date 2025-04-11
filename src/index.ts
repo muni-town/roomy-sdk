@@ -305,9 +305,13 @@ export class NamedEntity extends Administered {
   get image(): EntityIdStr | undefined {
     return this.entity.getOrInit(c.BasicMeta, (x) => x.get("image"));
   }
-
-  set image(value: Image) {
-    this.entity.getOrInit(c.BasicMeta, (x) => x.set("image", value.id));
+  set image(value: EntityIdStr | { id: EntityIdStr }) {
+    this.entity.getOrInit(c.BasicMeta, (x) =>
+      x.set(
+        "image",
+        typeof value == "object" && "id" in value ? value.id : value
+      )
+    );
   }
 }
 
@@ -646,7 +650,7 @@ export class Reactions extends EntityWrapper {
     if (reaction.includes(" ") || authorId.includes(" "))
       throw new Error("Reaction and Author ID must not contain spaces.");
     const raw: c.Reaction = `${reaction} ${authorId}`;
-    const component = this.entity.getOrInit(c.Reactions, (component) => {
+    this.entity.getOrInit(c.Reactions, (component) => {
       const list = component.toArray();
       if (!list.includes(raw)) {
         component.push(raw);
