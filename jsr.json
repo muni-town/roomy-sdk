@@ -1,8 +1,0 @@
-{
-    "name": "@roomy-chat/sdk",
-    "version": "0.1.0-preview.15",
-    "exports": {
-        ".": "./src/index.ts"
-    },
-    "license": "MPL-2.0"
-}

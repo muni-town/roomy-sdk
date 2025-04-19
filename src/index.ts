@@ -19,16 +19,16 @@
 
 import {
   type ComponentDef,
-  Cursor,
-  Entity,
+  type Cursor,
+  type Entity,
   type EntityIdStr,
   type IntoEntityId,
   intoEntityId,
-  LoroList,
-  LoroMap,
+  type LoroList,
+  type LoroMap,
   LoroMovableList,
-  LoroText,
-  Peer,
+  type LoroText,
+  type Peer,
 } from "@muni-town/leaf";
 export type { Uri } from "./components.ts";
 

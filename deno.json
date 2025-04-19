@@ -1,0 +1,15 @@
+{
+  "name": "@roomy-chat/sdk",
+  "version": "0.1.0-preview.16",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "license": "MPL-2.0",
+  "tasks": {
+    "docs:build": "cd docs && typedoc",
+    "docs:watch": "cd docs && typedoc --watch"
+  },
+  "imports": {
+    "@muni-town/leaf": "jsr:@muni-town/leaf@0.2.0-preview.16"
+  }
+}
