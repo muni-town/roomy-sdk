@@ -6,8 +6,8 @@
   },
   "license": "MPL-2.0",
   "tasks": {
-    "docs:build": "cd docs && typedoc",
-    "docs:watch": "cd docs && typedoc --watch"
+    "docs:build": "cd docs && deno install && typedoc",
+    "docs:watch": "cd docs && deno install && typedoc --watch"
   },
   "imports": {
     "@muni-town/leaf": "jsr:@muni-town/leaf@0.2.0-preview.16"

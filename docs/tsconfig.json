@@ -12,6 +12,14 @@
       "ESNext",
       "DOM"
     ],
+    "paths": {
+      "@muni-town/*": [
+        "./node_modules/@muni-town/*"
+      ],
+      "npm:loro-crdt@^1.5.1": [
+        "./node_modules/.deno/loro-crdt@1.5.3/node_modules/loro-crdt/bundler"
+      ]
+    },
     "types": [
       "./types/extra.d.ts",
       "./types/deno/lib.esnext",
@@ -20,5 +28,7 @@
       "./types/deno/lib.deno.unstable",
     ]
   },
-  "include": ["../src"],
+  "include": [
+    "../src"
+  ],
 }
