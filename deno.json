@@ -1,6 +1,6 @@
 {
   "name": "@roomy-chat/sdk",
-  "version": "0.1.0-preview.17",
+  "version": "0.1.0-preview.18",
   "exports": {
     ".": "./src/index.ts"
   },
@@ -14,6 +14,6 @@
     "docs:watch": "cd docs && deno install && typedoc --watch"
   },
   "imports": {
-    "@muni-town/leaf": "jsr:@muni-town/leaf@0.2.0-preview.16"
+    "@muni-town/leaf": "jsr:@muni-town/leaf@0.2.0-preview.17"
   }
 }
