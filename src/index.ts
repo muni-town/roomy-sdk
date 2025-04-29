@@ -626,6 +626,7 @@ export class Reactions extends EntityWrapper {
     const reactions: Record<string, Set<string>> = {};
     for (const raw of list) {
       const [reaction, user] = raw.split(" ");
+      if (!reaction || !user) continue;
       if (!reactions[reaction]) reactions[reaction] = new Set();
       reactions[reaction].add(user);
     }

@@ -1,6 +1,6 @@
 import {
   defComponent,
-  EntityIdStr,
+  type EntityIdStr,
   LoroMap,
   LoroMovableList,
   LoroText,

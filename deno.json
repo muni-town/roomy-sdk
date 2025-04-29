@@ -1,10 +1,14 @@
 {
   "name": "@roomy-chat/sdk",
-  "version": "0.1.0-preview.16",
+  "version": "0.1.0-preview.17",
   "exports": {
     ".": "./src/index.ts"
   },
   "license": "MPL-2.0",
+  "compilerOptions": {
+    "strict": true,
+    "noUncheckedIndexedAccess": true
+  },
   "tasks": {
     "docs:build": "cd docs && deno install && typedoc",
     "docs:watch": "cd docs && deno install && typedoc --watch"
