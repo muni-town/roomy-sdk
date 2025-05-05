@@ -1,5 +1,24 @@
 {
-  "exports": {
-    ".": "./src/index.ts"
+  "name": "@roomy-chat/sdk",
+  "version": "0.1.0-preview.18",
+  "license": "MPL-2.0",
+  "packageManager": "pnpm@10.10.0",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "repository": {
+    "url": "https://github.com/muni-town/roomy-sdk"
+  },
+  "scripts": {
+    "build": "pkgroll --minify --clean-dist --sourcemap && tsc",
+    "publish-packages": "pnpm run build && beachball publish -m 'chore: publish packages.'"
+  },
+  "devDependencies": {
+    "beachball": "^2.54.0",
+    "pkgroll": "^2.12.2",
+    "turbo": "^2.5.2",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@muni-town/leaf": "0.2.0-preview.19"
   }
 }

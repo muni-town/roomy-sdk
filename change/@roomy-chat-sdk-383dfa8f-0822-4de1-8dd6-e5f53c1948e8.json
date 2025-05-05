@@ -1,0 +1,7 @@
+{
+  "type": "prerelease",
+  "comment": "chore: package for npm.",
+  "packageName": "@roomy-chat/sdk",
+  "email": "zicklag@katharostech.com",
+  "dependentChangeType": "prerelease"
+}
