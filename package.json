@@ -1,6 +1,6 @@
 {
   "name": "@roomy-chat/sdk",
-  "version": "0.1.0-preview.18",
+  "version": "0.1.0-preview.19",
   "license": "MPL-2.0",
   "packageManager": "pnpm@10.10.0",
   "module": "./dist/index.js",
