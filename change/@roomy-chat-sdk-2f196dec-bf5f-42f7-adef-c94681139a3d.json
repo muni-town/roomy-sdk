@@ -1,7 +1,0 @@
-{
-  "type": "prerelease",
-  "comment": "Update package to include dist files and not include other unnecessary files.",
-  "packageName": "@roomy-chat/sdk",
-  "email": "zicklag@katharostech.com",
-  "dependentChangeType": "patch"
-}

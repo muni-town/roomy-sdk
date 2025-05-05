@@ -1,6 +1,6 @@
 {
   "name": "@roomy-chat/sdk",
-  "version": "0.1.0-preview.19",
+  "version": "0.1.0-preview.20",
   "license": "MPL-2.0",
   "packageManager": "pnpm@10.10.0",
   "module": "./dist/index.js",
@@ -8,7 +8,11 @@
   "repository": {
     "url": "https://github.com/muni-town/roomy-sdk"
   },
-  "files": ["./src", "./dist", "./README.md"],
+  "files": [
+    "./src",
+    "./dist",
+    "./README.md"
+  ],
   "scripts": {
     "change": "beachball change --no-commit",
     "build": "pkgroll --minify --clean-dist --sourcemap && tsc",
