@@ -125,6 +125,17 @@ export const WikiPages = defComponent(
   LoroMovableList<EntityIdStr>
 );
 
+// ...existing code...
+
+/**
+ * A list of entity IDs that link to this wiki page.
+ * Used to track backlinks between pages.
+ */
+export const Backlinks = defComponent(
+  "backlinks:01KF2P7QDGZ3X5AMR9WBNVTJ62",
+  LoroMovableList<EntityIdStr>
+);
+
 /**
  * An ordered list of Entity IDs for timeline items or timeline item {@linkcode Collection}s. The
  * latest items in the timeline are at the end of the list.
