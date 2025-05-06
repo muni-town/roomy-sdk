@@ -539,6 +539,48 @@ export class WikiPage extends NamedEntity {
   body<R>(handler: (x: LoroText) => R): R {
     return this.entity.getOrInit(c.Content, handler);
   }
+  
+  /**
+   * Get the list of pages that link to this page (backlinks).
+   * @returns An EntityList of WikiPages that link to this page
+   */
+  get backlinks(): EntityList<WikiPage> {
+    return new EntityList(this.peer, this.entity, c.Backlinks, WikiPage);
+  }
+  
+  /**
+   * Add a backlink to this page.
+   * @param source The WikiPage that links to this page
+   */
+  addBacklink(source: WikiPage): void {
+    if (!this.hasBacklink(source)) {
+      this.entity.getOrInit(c.Backlinks, (x) => x.push(source.id));
+    }
+  }
+  
+  /**
+   * Remove a backlink from this page.
+   * @param source The WikiPage to remove from backlinks
+   */
+  removeBacklink(source: WikiPage): void {
+    this.entity.getOrInit(c.Backlinks, (list) => {
+      const index = list.toArray().indexOf(source.id);
+      if (index !== -1) {
+        list.delete(index, 1);
+      }
+    });
+  }
+  
+  /**
+   * Check if this page has a specific backlink.
+   * @param source The WikiPage to check for
+   * @returns True if source is in the backlinks list
+   */
+  hasBacklink(source: WikiPage): boolean {
+    return this.entity.getOrInit(c.Backlinks, (x) => 
+      x.toArray().includes(source.id)
+    );
+  }
 }
 
 export class Timeline extends NamedEntity {
